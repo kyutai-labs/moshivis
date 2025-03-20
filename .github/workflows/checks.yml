@@ -1,0 +1,73 @@
+name: Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+jobs:
+  pylint_pytorch:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v5
+    - name: Static lint analysis with pylint
+      run: |
+        cd kyuteye_pt && uv run --locked pylint --rcfile=.pylintrc --fail-under=8.5 ./kyuteye
+
+  ruff_mlx:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v5
+    - name: Static lint analysis with pylint
+      run: |
+        cd kyuteye_mlx && uv run ruff format --diff && uv run ruff check --select I
+
+  sanity_check_pytorch:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v5
+    - name: Sanity check
+      run: |
+        cd kyuteye_pt && uv run --locked sanity-check
+
+  sanity_check_mlx:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+    - uses: astral-sh/setup-uv@v5
+    - name: Sanity check
+      run: |
+        cd kyuteye_mlx && uv run --locked sanity-check
+
+  sanity_check_rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache Cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            kyuteye_rs/target
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: cargo-
+      - run: cd kyuteye_rs && cargo fmt --all -- --check
+      - name: Ubuntu dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y -qq libasound2-dev libssl-dev libpulse-dev libdbus-1-dev portaudio19-dev protobuf-compiler
+      - name: Clippy
+        run: cd kyuteye_rs && cargo --locked clippy --workspace --tests --examples --locked -- -D warnings
+
+  build_client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker buildx bake client
+      - run: tail client/dist/index.html

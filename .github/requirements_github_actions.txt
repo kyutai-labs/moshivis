@@ -1,0 +1,63 @@
+# Main setup
+# old version: transformers 4.43.3 and accelerate 0.33.0
+# new version (for pixtrla): transformers 4.46.0 and accelerate 1.0.1
+accelerate==1.0.1
+anls
+anls-star
+av<12
+auditok<0.3.0
+cython
+datasets
+deepspeed
+demucs
+einops
+encodec
+fasttext
+flashy>=0.0.1
+gradio
+huggingface_hub
+hydra_colorlog
+hydra-core>=1.1
+ipywidgets
+jiwer
+julius
+jupyterlab
+librosa
+maturin
+num2words
+numpy
+onnxruntime
+opencv-python
+protobuf
+pyannote.audio
+pyannote.metrics
+pycocoevalcap
+pycocotools
+sentencepiece
+spacy==3.5.2
+tensorboard
+timm
+torch==2.2.0  
+torchaudio==2.2.0
+torchmetrics
+torchtyping
+torchvision==0.17.0
+tqdm
+transformers==4.47.0  # need Encodec there.
+webdataset==0.2.100  # for sanity
+evaluate
+rouge-score
+xformers==0.0.24
+
+# specific clip commit
+clip @ https://github.com/openai/CLIP/archive/master.zip#sha256=11c3593912e6e6446fb0bde144c5ea374f7e19eeab9072c3eb00b59dd8afb706
+
+# launcheon + code prettifying stuff
+fire
+rich
+pyyaml
+black
+mypy==1.11.2
+pylint
+matplotlib
+seaborn

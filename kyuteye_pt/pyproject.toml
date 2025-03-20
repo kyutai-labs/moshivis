@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kyuteye"
+version = "0.0.0"
+description = "Kyutai with an 'eye'"
+authors = [
+    { name = "Amelie Royer", email = "amelie@kyutai.org" },
+    { name = "Moritz Boehle", email = "moritz@kyutai.org" }
+]
+maintainers = [{ name = "Amelie Royer", email = "amelie@kyutai.org" }]
+keywords = []
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = [
+    "einops",
+    "huggingface_hub",
+    "moshi==0.1.0",
+    "numpy<2",
+    "sentencepiece",
+    "torch==2.2.0",
+    "torchvision==0.17.0",
+    "tqdm",
+    "transformers==4.47.0",
+    "triton",
+    "fire", 
+    "rich",
+    "pyyaml",
+    "black",
+    "setuptools",
+    "sphn >= 0.1.4",
+]
+
+[project.scripts]
+server = "kyuteye.server:main"
+sanity-check = "kyuteye.server:sanity_check"
+
+[tool.mypy]
+python_version = "3.10"
+
+[[tool.mypy.overrides]]
+module = ["fire", "yaml", "setuptools", "transformers.*",
+          "torchvision.*", "timm.*", "sentencepiece", "moshi.*",
+          "huggingface_hub", "sphn"]
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[dependency-groups]
+dev = [
+    "mypy==1.11.2",
+    "pylint>=3.3.4",
+]

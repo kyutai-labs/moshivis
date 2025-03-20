@@ -1,0 +1,67 @@
+[project]
+name = "kyuteye_mlx"
+requires-python = ">= 3.10,<3.13"
+description = "Kyutai with an 'eye', but running on macOS"
+dependencies = [
+    "numpy >= 2.1.0, < 2.2",
+    "safetensors >= 0.4.0, < 0.5",
+    "huggingface-hub >= 0.24, < 0.25",
+    "rustymimi == 0.2.2",
+    "sentencepiece == 0.2",
+    "sounddevice == 0.5",
+    "sphn >= 0.1.4",
+    # Do not change this version of mlx. All the others up
+    # to 0.22.1 are slower for this codebase.
+    "mlx==0.23.1",
+    "aiohttp>=3.10.5, <3.11",
+    "pillow",
+    "line-profiler>=4.2.0",
+    "rich>=13.9.4",
+    "packaging>=24.2",
+    "jaxtyping==0.3.0",
+    "beartype>=0.19.0",
+    "fire>=0.7.0",
+]
+authors = [
+    { name = "Gabriel de Marmiesse", email = "gabriel@kyutai.org" },
+    { name = "Moritz Boehle", email = "moritz@kyutai.org" }
+]
+license = {text = "MIT"}
+dynamic = ["version"]
+readme = "README.md"
+
+[project.scripts]
+server = "kyuteye_mlx.local_web:main"
+sanity-check = "kyuteye_mlx.local_web:sanity_check"
+quantize = "kyuteye_mlx.quantize:main"
+benchmark = "kyuteye_mlx.benchmark:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "kyuteye_mlx.__version__"}
+
+[tool.ruff]
+line-length = 110
+
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "kyuteye_mlx.mlx_vlm.*"
+disallow_untyped_defs = false
+
+
+[dependency-groups]
+dev = [
+    "mypy>=1.11.2",
+    "pylint>=3.3.4",
+    "pytest>=8.3.4",
+    "torch>=2.3.0",
+    "moshi==0.1.0",
+    "ruff>=0.9.7",
+    "monkeytype>=23.3.0",
+]
