@@ -3,13 +3,13 @@
 ![precommit badge](https://github.com/kyutai-labs/moshivis/workflows/precommit/badge.svg)
 ![rust ci badge](https://github.com/kyutai-labs/moshivis/workflows/Rust%20CI/badge.svg)
 
-[[Technical Report]][moshi-vision-arxiv] [[Demo]][talk-to-moshivis] [[Models on Hugging Face]](https://huggingface.co/collections/kyutai/)
+[[Technical Report]][moshi-vision-arxiv] [[Demo]][talk-to-moshivis] [[Models on Hugging Face]](https://huggingface.co/collections/kyutai/moshivis-v01-67cef4acae6a5d75d6d6c883)
 
 
 MoshiVis is a **Vision Speech Model** (VSM) directly building on the speech-text foundation model [Moshi][moshi-arxiv] and augmenting it with the ability to freely discuss about an image while maintaining its natural conversation style and low latency.In total, MoshiVis adds $\sim$ 206M adapters parameters on top of the 7B Moshi and a pretrained frozen 400M PaliGemma2 vision encoder.
 
- This repository currently contains inference code to run your own MoshiVis server supporting three different backends via a webUI frontend. We are also planning to release training/finetuning code in the future. 
-For more information about our speech codec Mimi and speech model Moshi, please visit the original [Moshi repo][moshi-github]. 
+ This repository currently contains inference code to run your own MoshiVis server supporting three different backends via a webUI frontend. We are also planning to release training/finetuning code in the future.
+For more information about our speech codec Mimi and speech model Moshi, please visit the original [Moshi repo][moshi-github].
 For more technical details on MoshiVis, see our [blog post][blog] and [technical report][moshi-vision-arxiv].
 
 [Talk to MoshiVis][talk-to-moshivis] now on our live demo !
@@ -19,7 +19,7 @@ For more technical details on MoshiVis, see our [blog post][blog] and [technical
 width="650px"></p>
 
 
-To inject visual inputs in the stream of *speech tokens* from Moshi, we extend the core transformer with a **cross-attention mechanism** to infuse visual information into the speech tokens stream. To maintain Moshi's **low-latency** and reduce memory usage, the cross-attention projection weights are shared **across layers.** 
+To inject visual inputs in the stream of *speech tokens* from Moshi, we extend the core transformer with a **cross-attention mechanism** to infuse visual information into the speech tokens stream. To maintain Moshi's **low-latency** and reduce memory usage, the cross-attention projection weights are shared **across layers.**
 Moreover, to ensure that Moshi’s original conversational abilities are not lost in the process, the cross-attention modules  feature a gating mechanism that allows the model to modulate the visual input stream at will.
 
 
@@ -28,26 +28,26 @@ For more details on MoshiVis, including our training pipeline, synthetic data ge
 
 
 ## Model Release
-We release MoshikaVis, based on the original Moshika  (*female voice*)  checkpoints from Moshi's open-source release. For the image embedding part, we rely on publically available off-the-shelf image-text encoders: The checkpoints we release use the frozen weights of a vision encoder from the [PaliGemma2](https://arxiv.org/abs/2412.03555) family, specifically on the weights provided at [huggingface](https://huggingface.co/google/paligemma2-3b-pt-448). Note that for convenience, each MoshiVis checkpoint contains the full model: i.e., the vision adaptation modules weights are bundled together with the weights of Mimi (speech codec), the Helium text tokenizer, image encoder, and base Moshi model. 
+We release MoshikaVis, based on the original Moshika  (*female voice*)  checkpoints from Moshi's open-source release. For the image embedding part, we rely on publicly available off-the-shelf image-text encoders: The checkpoints we release use the frozen weights of a vision encoder from the [PaliGemma2](https://arxiv.org/abs/2412.03555) family, specifically on the weights provided at [huggingface](https://huggingface.co/google/paligemma2-3b-pt-448). Note that for convenience, each MoshiVis checkpoint contains the full model: i.e., the vision adaptation modules weights are bundled together with the weights of Mimi (speech codec), the Helium text tokenizer, image encoder, and base Moshi model.
 
-For each model, we release several variants compatible with three different backends and quantization formats. Further instructions for each backend can be found below. 
+For each model, we release several variants compatible with three different backends and quantization formats. Further instructions for each backend can be found below.
 
 | Backend | Moshi**ka** |
-| ------- | ----------- | 
-| [Pytorch](#pytorch-backend) |  [BF16](https://huggingface.co/kyutai/moshika-vis-pytorch-bf16)  | 
-| [Rust](#rust-backend) |  [BF16](https://huggingface.co/kyutai/moshika-vis-candle-bf16) [Q8_0](https://huggingface.co/kyutai/moshika-vis-candle-q8)  |  
+| ------- | ----------- |
+| [PyTorch](#pytorch-backend) |  [BF16](https://huggingface.co/kyutai/moshika-vis-pytorch-bf16)  |
+| [Rust](#rust-backend) |  [BF16](https://huggingface.co/kyutai/moshika-vis-candle-bf16) [Q8_0](https://huggingface.co/kyutai/moshika-vis-candle-q8)  |
 | [MLX](#mlx-backend) |  [BF16](https://huggingface.co/kyutai/moshika-vis-mlx-bf16)   |
 
 
 
-All model weights (*excluding the bundled vision encoder*) is released under the CC-BY 4.0 license; The bundled vision encoder (*PaliGemma2's vision encoder*) is released under the [Gemma license](https://ai.google.dev/gemma/terms).
+All model weights (*excluding the bundled vision encoder*) are released under the CC-BY 4.0 license; The bundled vision encoder (*PaliGemma2's vision encoder*) is released under the [Gemma license](https://ai.google.dev/gemma/terms).
 
 
 ## Organisation of the Repository
 
 For the **frontend**, we recommend using the provided web UI as it allows for additional echo cancellation that helps
-the overall model quality. To obtain the client, you can either **(i)** build it yourself from the sources in [`client`](client/) as [described here](#building-the-frontend) or **(ii)** download the pre-built static 
-version we provide: 
+the overall model quality. To obtain the client, you can either **(i)** build it yourself from the sources in [`client`](client/) as [described here](#building-the-frontend) or **(ii)** download the pre-built static
+version we provide:
 
 ```bash
 # Download prebuilt client sources
@@ -59,7 +59,7 @@ pip install fire rich huggingface_hub
 python scripts/get_static_client.py
 ```
 
-Most commands below will serve this UI by default using the `https` protocol (see more info [here](#http-vs-htttps)). To connect via `https`, you will need to generate SSL certificates first, as follows:
+Most commands below will serve this UI by default using the `https` protocol (see more info [here](#http-vs-https)). To connect via `https`, you will need to generate SSL certificates first, as follows:
 
 ```bash
 # Generate the SSL certificates in the root directory
@@ -67,13 +67,13 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pe
 ```
 
 We provide three different  **backends** for the MoshiVis inference stack in this repo. While we hope that the present codebase will work on Windows, we do not provide official support for it.
-- A [Pytorch](#pytorch-backend) version in the [`kyuteye_pt`](kyuteye_pt) directory.
+- A [PyTorch](#pytorch-backend) version in the [`kyuteye_pt`](kyuteye_pt) directory.
 - A [Rust](#rust-backend) version (as used in the online demo) is in the [`kyuteye_rs`](kyuteye_rs/) directory.
 - A [MLX](#mlx-backend) version (tested on a MacBook Pro M3) is in the [`kyuteye_mlx`](kyuteye_mlx/) directory
 
 
 
-For the Pytorch and MLX backends, we recommend using [uv](https://docs.astral.sh/uv/) to setup and run the code, 
+For the PyTorch and MLX backends, we recommend using [uv](https://docs.astral.sh/uv/) to setup and run the code,
 as it will manage all dependencies for you transparently.
 
 `uv` is provided as a lightweight binary and can be installed as:
@@ -87,7 +87,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
  > Note: At the moment, we do not support quantization
  > for the PyTorch version, so you will need a GPU with a significant amount of memory ($\sim$ 24GB).
 
-You can start the MoshiVis Pytorch server with the following command and then access the web UI on [https://localhost:8008](http://localhost:8008)
+You can start the MoshiVis PyTorch server with the following command and then access the web UI on [https://localhost:8008](http://localhost:8008)
 
 ```bash
 cd kyuteye_pt
@@ -114,28 +114,29 @@ Alternatively you can use `config-moshika-vis-q8.json` rather than `config-moshi
 quantized q8 model. You can also change some of the server options (e.g., starting port) in the json file directly.
 
 Once the server has printed 'standalone worker listening', this means the model is ready.
- By default the Rust server  will be accessible at [https://localhost:8088](https://localhost:8088).
+By default the Rust server  will be accessible at [https://localhost:8088](https://localhost:8088).
 
 
 
 ### MLX Backend
 
-We provide a MLX model checkpoint in `bfloat16` as well as quantized checkpoints `q4` and `q8`.
+We provide a MLX model checkpoint in `bfloat16` as well as quantized checkpoints
+using `q4` and `q8`.
 
-To start the MoshiVis MLX backend you can then run the following command 
+To start the MoshiVis MLX backend you can then run the following commands:
 
 ```bash
 cd kyuteye_mlx
-# In Bfloat16 - weights will be downloaded from HF
+# In bfloat16 - weights will be downloaded from HF
 uv run server
 
-# In Q4 - using local quantized weights
+# In q4 - using local quantized weights
 uv run server -q 4
 
-# In Q8 - using local quantized weights
+# In q8 - using local quantized weights
 uv run server -q 8
 
-# In BFloat16 - using local weights
+# In bfloat16 - using local weights
 uv run server --moshi-weights model.safetensors
 
 # In q4 - using local (quantized) weights
@@ -148,7 +149,7 @@ You can then access the web UI on [http://localhost:8008](http://localhost:8008)
 
 #### WebUI
 
-We recommend using the WebUI frontend as explained [here](#organisation-of-the-repository). If you want to build the sources yourself, follow these steps (further installation and build instructions can be found in the `client` directory): 
+We recommend using the WebUI frontend as explained [here](#organisation-of-the-repository). If you want to build the sources yourself, follow these steps (further installation and build instructions can be found in the `client` directory):
 
 **via NPM.**
 ```bash
@@ -163,13 +164,12 @@ npm run build
 docker buildx bake client
 ```
 
-After building the sources, the static dir for the web UI can then be found in the 
+After building the sources, the static dir for the web UI can then be found in the
 `client/dist` directory, and  will be used as default for the different backend.
 
 #### Rust Command Line
 
-Alternatively, we also provide a command line interface
-for the Rust backend: 
+Alternatively, we also provide a command line interface for the Rust backend:
 
 
 ```bash
@@ -182,7 +182,7 @@ cargo run --bin moshi-cli -r -- tui --host localhost
 
 ## Troubleshooting
 
-### http vs htttps
+### http vs https
 By default, the web UI server starts with the `https` protocol rather than `http`: Accessing a server that is not localhost via `http` may cause issues with using the microphone in the web UI (in some browsers this is only allowed using https). 
 
 To use an `https` connection, you will first need to setup SSL certificates:
@@ -193,11 +193,11 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pe
 ```
 
 Note that if you want to use a `http` connection instead you can:
-  * For the Pytorch backend, add the flag `--ssl False`
-  * For the MLX backend
+  * For the PyTorch backend, add the flag `--ssl False`
+  * For the MLX backend, `http` is the default and `https` can be used with `--ssl certdir` where `certdir` is the directory that contains the certificates.
 
 
-Note that when using `https` you  may get warnings from the browser about the site being unsafe. 
+Note that when using `https` you  may get warnings from the browser about the site being unsafe.
 When using chrome for instance, you
 can bypass these by selecting "Details" or "Advanced", then "Visit this unsafe
 site" or "Proceed to localhost (unsafe)".
@@ -209,9 +209,10 @@ site" or "Proceed to localhost (unsafe)".
 The present code is provided under the MIT license for the Python parts, and Apache license for the Rust backend.
 The web client code is provided under the MIT license.
 
-The model weights (*excluding the vision encoder*) for the models are released under the CC-BY 4.0 license; the vision encoder is licensed under Apache 2.0. 
+The model weights (*excluding the vision encoder*) for the models are released under the CC-BY 4.0 license; the vision encoder is licensed under Apache 2.0.
 
 All images displayed in the web UI are obtained under the free Unsplash license. For the precise list of image urls and authors, please refer to [this file](client/public/assets/images/demo/attribution.txt).
+
 ## Citation
 
 If you use MoshiVis in your research, please cite our associated technical reports:
