@@ -1,12 +1,11 @@
 # M👁️shiVis: Teaching Speech Models to Converse about Images
 
-![precommit badge](https://github.com/kyutai-labs/moshivis/workflows/precommit/badge.svg)
-![rust ci badge](https://github.com/kyutai-labs/moshivis/workflows/Rust%20CI/badge.svg)
+![CI checks](https://github.com/kyutai-labs/moshivis/actions/workflows/checks.yml/badge.svg)
 
 [[Technical Report]][moshi-vision-arxiv] [[Demo]][talk-to-moshivis] [[Models on Hugging Face]](https://huggingface.co/collections/kyutai/moshivis-v01-67cef4acae6a5d75d6d6c883)
 
 
-MoshiVis is a **Vision Speech Model** (VSM) directly building on the speech-text foundation model [Moshi][moshi-arxiv] and augmenting it with the ability to freely discuss about an image while maintaining its natural conversation style and low latency.In total, MoshiVis adds $\sim$ 206M adapters parameters on top of the 7B Moshi and a pretrained frozen 400M PaliGemma2 vision encoder.
+MoshiVis is a **Vision Speech Model** (VSM) directly building on the speech-text foundation model [Moshi][moshi-arxiv] and augmenting it with the ability to freely discuss about an image while maintaining its natural conversation style and low latency. In total, MoshiVis adds $\sim$ 206M adapters parameters on top of the 7B Moshi and a pretrained frozen 400M PaliGemma2 vision encoder.
 
  This repository currently contains inference code to run your own MoshiVis server supporting three different backends via a webUI frontend. We are also planning to release training/finetuning code in the future.
 For more information about our speech codec Mimi and speech model Moshi, please visit the original [Moshi repo][moshi-github].
