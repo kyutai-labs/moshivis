@@ -1,7 +1,6 @@
 # M👁️shiVis: Teaching Speech Models to Converse about Images
 
-![precommit badge](https://github.com/kyutai-labs/moshivis/workflows/precommit/badge.svg)
-![rust ci badge](https://github.com/kyutai-labs/moshivis/workflows/Rust%20CI/badge.svg)
+![CI checks](https://github.com/kyutai-labs/moshivis/actions/workflows/checks.yml/badge.svg)
 
 [[Technical Report]][moshi-vision-arxiv] [[Demo]][talk-to-moshivis] [[Models on Hugging Face]](https://huggingface.co/collections/kyutai/)
 
