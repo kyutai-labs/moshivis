@@ -2,14 +2,14 @@
 
 ![CI checks](https://github.com/kyutai-labs/moshivis/actions/workflows/checks.yml/badge.svg)
 
-[[Technical Report]][moshi-vision-arxiv] [[Demo]][talk-to-moshivis] [[Models on Hugging Face]](https://huggingface.co/collections/kyutai/moshivis-v01-67cef4acae6a5d75d6d6c883)
+[[Preprint]][moshi-vision-arxiv] [[Demo]][talk-to-moshivis] [[Models on Hugging Face]](https://huggingface.co/collections/kyutai/)
 
 
 MoshiVis is a **Vision Speech Model** (VSM) directly building on the speech-text foundation model [Moshi][moshi-arxiv] and augmenting it with the ability to freely discuss about an image while maintaining its natural conversation style and low latency. In total, MoshiVis adds $\sim$ 206M adapters parameters on top of the 7B Moshi and a pretrained frozen 400M PaliGemma2 vision encoder.
 
  This repository currently contains inference code to run your own MoshiVis server supporting three different backends via a webUI frontend. We are also planning to release training/finetuning code in the future.
 For more information about our speech codec Mimi and speech model Moshi, please visit the original [Moshi repo][moshi-github].
-For more technical details on MoshiVis, see our [blog post][blog] and [technical report][moshi-vision-arxiv].
+For more technical details on MoshiVis, see our [blog post][blog] and [preprint][moshi-vision-arxiv].
 
 [Talk to MoshiVis][talk-to-moshivis] now on our live demo !
 
@@ -23,7 +23,7 @@ Moreover, to ensure that Moshi’s original conversational abilities are not los
 
 
 
-For more details on MoshiVis, including our training pipeline, synthetic data generation pipeline, and ablation experiments on the gating mechanism see our [technical report][moshi-vision-arxiv].
+For more details on MoshiVis, including our training pipeline, synthetic data generation pipeline, and ablation experiments on the gating mechanism see our [preprint][moshi-vision-arxiv].
 
 
 ## Model Release
@@ -214,7 +214,7 @@ All images displayed in the web UI are obtained under the free Unsplash license.
 
 ## Citation
 
-If you use MoshiVis in your research, please cite our associated technical reports:
+If you use MoshiVis in your research, please cite our work:
 
 ```
 @article{kyutai2025moshivis,
@@ -222,7 +222,7 @@ If you use MoshiVis in your research, please cite our associated technical repor
   Laurent Mazar\'e and Alexandre D\'efossez and Neil Zeghidour and Patrick P\'erez},
   year = {2025},
   title = {Vision-Speech Models: Teaching Speech Models to Converse about Images},
-  journal = {ArXiv},
+  url = {https://github.com/kyutai-labs/moshivis/blob/main/assets/moshivis_arxiv.pdf},
 }
 
 
