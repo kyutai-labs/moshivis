@@ -16,18 +16,18 @@ class MoshiProcessor extends AudioWorkletProcessor {
     // Buffer length definitions
     let frameSize = asSamples(80);
     // initialBufferSamples: we wait to have at least that many samples before starting to play
-    this.initialBufferSamples = 1 * frameSize;
+    this.initialBufferSamples = 2 * frameSize;
     // once we have enough samples, we further wait that long before starting to play.
     // This allows to have buffer lengths that are not a multiple of frameSize.
-    this.partialBufferSamples = asSamples(10);
+    this.partialBufferSamples = asSamples(80);
     // If the buffer length goes over that many, we will drop the oldest packets until
     // we reach back initialBufferSamples + partialBufferSamples.
-    this.maxBufferSamples = asSamples(10);
+    this.maxBufferSamples = asSamples(80);
     // increments
-    this.partialBufferIncrement = asSamples(5);
-    this.maxPartialWithIncrements = asSamples(80);
-    this.maxBufferSamplesIncrement = asSamples(5);
-    this.maxMaxBufferWithIncrements = asSamples(80);
+    this.partialBufferIncrement = asSamples(40);
+    this.maxPartialWithIncrements = asSamples(240);
+    this.maxBufferSamplesIncrement = asSamples(40);
+    this.maxMaxBufferWithIncrements = asSamples(240);
 
     // State and metrics
     this.initState();
@@ -94,8 +94,8 @@ class MoshiProcessor extends AudioWorkletProcessor {
     this.pidx = 0;
 
     // For now let's reset the buffer params.
-    this.partialBufferSamples = asSamples(10);
-    this.maxBufferSamples = asSamples(10);
+    this.partialBufferSamples = asSamples(80);
+    this.maxBufferSamples = asSamples(80);
   }
 
   totalMaxBufferSamples() {
