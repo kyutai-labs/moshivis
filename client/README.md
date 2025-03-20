@@ -27,6 +27,12 @@ static dir by the  different  backends:
 npm run build
 ```
 
+If Docker is available, you can skip all the previous steps and just run
+
+```
+docker buildx bake
+```
+from the root of this repository. It will output the static sources for the website in `client/dist`.
 
 ### License
 
