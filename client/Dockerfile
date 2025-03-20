@@ -8,8 +8,6 @@ RUN npm install
 
 RUN npx vite build
 
-FROM nginx
+FROM scratch AS build_result
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-RUN chmod -R 755 /usr/share/nginx/html
+COPY --from=builder /app/dist /
