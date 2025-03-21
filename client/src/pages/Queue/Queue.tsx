@@ -261,7 +261,7 @@ export const Queue: FC = () => {
               details about the <span className='vis-words'>image</span> ask it  to do some <span className='cute-words'>Pirate</span> role play.</p>
             <p>We strive to support all browsers but Chrome works best. Conversations are limited to <span className='cute-words'>5 min</span>.</p>
             <p> Head to the <span className='vis-words'>Settings</span> to configure the image size and other parameters.</p>
-            <p> For more information about this project, check out the <a href="https://kyutai.org/2025/03/20/moshivis-blog.html" target="_blank" className="link">MoshiVis project page</a>!</p>
+            <p> For more information about this project, check out the <a href="https://kyutai.org/moshivis" target="_blank" className="link">MoshiVis project page</a>!</p>
             <p>Baked with &lt;3 @<a href="https://kyutai.org/" className='cute-words underline'>Kyutai</a>.</p>
           </div>
         </div>

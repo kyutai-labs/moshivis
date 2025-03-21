@@ -218,18 +218,18 @@ If you use MoshiVis in your research, please cite our work:
 
 ```
 @article{kyutai2025moshivis,
-  author = {Am\'elie Royer and Moritz Böhle and Gabriel de Marmiesse and
-  Laurent Mazar\'e and Alexandre D\'efossez and Neil Zeghidour and Patrick P\'erez},
+  author = {Amélie Royer and Moritz Böhle and Gabriel de Marmiesse and
+  Laurent Mazaré and Alexandre Défossez and Neil Zeghidour and Patrick Pérez},
   year = {2025},
   title = {Vision-Speech Models: Teaching Speech Models to Converse about Images},
-  url = {https://github.com/kyutai-labs/moshivis/blob/main/assets/moshivis_arxiv.pdf},
+  journal = {ArXiv},
+  url = {https://arxiv.org/abs/2503.15633}
 }
-
 
 @techreport{kyutai2024moshi,
       title={Moshi: a speech-text foundation model for real-time dialogue},
-      author={Alexandre D\'efossez and Laurent Mazar\'e and Manu Orsini and
-      Am\'elie Royer and Patrick P\'erez and Herv\'e J\'egou and Edouard Grave and Neil Zeghidour},
+      author={Alexandre Défossez and Laurent Mazaré and Manu Orsini and
+      Amélie Royer and Patrick Pérez and Hervé Jégou and Edouard Grave and Neil Zeghidour},
       year={2024},
       eprint={2410.00037},
       archivePrefix={arXiv},
@@ -238,8 +238,8 @@ If you use MoshiVis in your research, please cite our work:
 }
 ```
 
-[blog]: https://kyutai.org/2025/03/20/moshivis-blog.html
-[moshi-vision-arxiv]: assets/moshivis_arxiv.pdf
+[blog]: https://kyutai.org/moshivis
+[moshi-vision-arxiv]: https://arxiv.org/abs/2503.15633
 [moshi-arxiv]: https://arxiv.org/abs/2410.00037
 [moshi-github]: https://github.com/kyutai-labs/moshi/tree/main?tab=readme-ov-file#models
 [talk-to-moshivis]: https://vis.moshi.chat
