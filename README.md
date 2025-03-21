@@ -14,7 +14,7 @@ For more technical details on MoshiVis, see our [blog post][blog] and [preprint]
 [Talk to MoshiVis][talk-to-moshivis] now on our live demo !
 
 <p align="center">
-<img src="assets/MoshiVisSchema.png" style="padding: 5px; background-color: white" alt="Schema representing the structure of MoshiVis. "
+<img src="assets/MoshiVisSchema.png" style="padding: 5px; background-color: black" alt="Schema representing the structure of MoshiVis. "
 width="650px"></p>
 
 
