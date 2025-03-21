@@ -23,7 +23,7 @@ runs:
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-          rust/target/
+          kyuteye_rs/target/
         key: ${{ inputs.os }}-cargo-${{ inputs.target }}-${{ hashFiles('**/Cargo.toml') }}
         restore-keys: ${{ inputs.os }}-cargo-
     - name: install deps

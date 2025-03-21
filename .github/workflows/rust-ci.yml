@@ -11,7 +11,7 @@ jobs:
     name: Check
     defaults:
       run:
-        working-directory: ./rust
+        working-directory: ./kyuteye_rs
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -36,7 +36,7 @@ jobs:
     name: Test
     defaults:
       run:
-        working-directory: ./rust
+        working-directory: ./kyuteye_rs
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
