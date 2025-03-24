@@ -26,14 +26,14 @@ uv run generate.py run --task lead1 --dataset docci --verbose True --end_idx 1
 ```
 
 *Example output: (train_00000 of DOCCI)*
->  - First things first, what's with the extra limbs? Is that a human-like creature or some sort of insect?
->  - I'd say it's a unique blend. It has four arms and two legs like a human, but those antennae and the insect-like features on its head suggest something else. It's quite the fusion!
->  - Four arms, two legs, antennae... I see. So, is it also wearing a suit and tie?
->  - No, it's not wearing a suit or tie. It has purple skin and is wearing a green cap with orange lines. No signs of formal clothing here.
->  - Yeah, I see the cap. It says 'PAN' on it. Is that a musical instrument on its head?
->  - No, that's not an instrument on its head. It's a green cap with orange lines, and 'PAN' is written in black on the front.
->  - Oh, so it's just a cap? What's up with the orange shoes then?
->  - The character is indeed wearing orange shoes. They have a green tongue and white, loose laces. Quite a vibrant pair!
+>  - USER: First things first, what's with the extra limbs? Is that a human-like creature or some sort of insect?
+>  - MOSHIVIS: I'd say it's a unique blend. It has four arms and two legs like a human, but those antennae and the insect-like features on its head suggest something else. It's quite the fusion!
+>  - USER: Four arms, two legs, antennae... I see. So, is it also wearing a suit and tie?
+>  - MOSHIVIS: No, it's not wearing a suit or tie. It has purple skin and is wearing a green cap with orange lines. No signs of formal clothing here.
+>  - USER: Yeah, I see the cap. It says 'PAN' on it. Is that a musical instrument on its head?
+>  - MOSHIVIS: No, that's not an instrument on its head. It's a green cap with orange lines, and 'PAN' is written in black on the front.
+>  - USER: Oh, so it's just a cap? What's up with the orange shoes then?
+>  - MOSHIVIS: The character is indeed wearing orange shoes. They have a green tongue and white, loose laces. Quite a vibrant pair!
 
 
 To generate synthetic visual dialogues for each of the image in the DOCCI train split for the 
@@ -64,14 +64,14 @@ uv run generate.py watch --task comb --dataset docci --idx 10
 ```
 
 *Example output: (train_00012 of DOCCI)*
-> USER: So, what's going on in this image then?
-> MOSHIVIS: A stone brick wall, slightly bowed, occupies the center, with limestone-colored bricks and brown mortar. Above it, a long, wide shadow rises towards the top right, resembling a crack in the smooth, light tan cave ceiling, dotted with white splotches and lit by a spotlight.
-> USER: What color are the bricks and mortar of the wall?
-> MOSHIVIS: Limestone-colored bricks with brown mortar.
-> USER: How many bricks can you count in the wall?
-> MOSHIVIS: I'm afraid the image doesn't provide a clear count of individual bricks. The wall appears to be made up of limestone-colored bricks with brown mortar, but the perspective and lighting make it difficult to distinguish each brick.
-> USER: I see. How many distinct sections of stone brick wall can you make out in the image?
-> MOSHIVIS: There are three distinct sections of stone brick wall in the image. The largest one is bowed and takes up the central part, with two smaller sections in the top left and bottom right corners.
+>  - USER: So, what's going on in this image then?
+>  - MOSHIVIS: A stone brick wall, slightly bowed, occupies the center, with limestone-colored bricks and brown mortar. Above it, a long, wide shadow rises towards the top right, resembling a crack in the smooth, light tan cave ceiling, dotted with white splotches and lit by a spotlight.
+>  - USER: What color are the bricks and mortar of the wall?
+>  - MOSHIVIS: Limestone-colored bricks with brown mortar.
+>  - USER: How many bricks can you count in the wall?
+>  - MOSHIVIS: I'm afraid the image doesn't provide a clear count of individual bricks. The wall appears to be made up of limestone-colored bricks with brown mortar, but the perspective and lighting make it difficult to distinguish each brick.
+>  - USER: I see. How many distinct sections of stone brick wall can you make out in the image?
+>  - MOSHIVIS: There are three distinct sections of stone brick wall in the image. The largest one is bowed and takes up the central part, with two smaller sections in the top left and bottom right corners.
 
 
 
