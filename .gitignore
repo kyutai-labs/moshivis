@@ -20,3 +20,4 @@ key.pem
 Gemfile.lock
 project_page/_site/*
 kyuteye_mlx/static/*
+ssvd/synthetic_visual_dialogues/
