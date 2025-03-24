@@ -177,8 +177,6 @@ cargo run --bin moshi-cli -r -- tui --host localhost
 ```
 
 
-
-
 ## Troubleshooting
 
 ### http vs https
@@ -202,7 +200,6 @@ can bypass these by selecting "Details" or "Advanced", then "Visit this unsafe
 site" or "Proceed to localhost (unsafe)".
 
 
-
 ## License
 
 The present code is provided under the MIT license for the Python parts, and Apache license for the Rust backend.
@@ -211,6 +208,13 @@ The web client code is provided under the MIT license.
 The model weights (*excluding the vision encoder*) for the models are released under the CC-BY 4.0 license; the vision encoder is licensed under Apache 2.0.
 
 All images displayed in the web UI are obtained under the free Unsplash license. For the precise list of image urls and authors, please refer to [this file](client/public/assets/images/demo/attribution.txt).
+
+
+
+## Datasets
+We also release two data-related artifacts to accompany MoshiVis:
+  * In the `ssvd` directory, we include code and instructions to reproduce our synthetic visual dialogue  datasets described in Section 3.3 and Appendix E of our preprint
+  * For evaluation purposes, we also release [`Babillage`](https://huggingface.co/datasets/kyutai/Babillage) on HuggingFace, which contains spoken versions of three common VLM benchmarks (COCO-Captions 2014, OCR-VQA and VQAv2) for prompting the model's visual understanding in audio form.
 
 ## Citation
 

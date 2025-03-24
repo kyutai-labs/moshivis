@@ -3,10 +3,10 @@
 # LICENSE file in the root directory of this source tree.
 
 """Smaller building blocks:
-  * FFN layers with Swi-GLU like gating
-  * Normalization layers
-  * Input embedding layer
-  * Positional embeddings
+* FFN layers with Swi-GLU like gating
+* Normalization layers
+* Input embedding layer
+* Positional embeddings
 """
 
 from enum import Enum, unique
@@ -53,7 +53,7 @@ def get_activation(
         "softsign",
         "identity",
         "none",
-    ]
+    ],
 ) -> Callable[[torch.Tensor], torch.Tensor]:
     """Return correct activation function from the given name"""
     if name in {"sigmoid", "tanh", "relu"}:
@@ -321,11 +321,6 @@ class ClampedEmbedding(torch.nn.Embedding):
     ) -> torch.Tensor:
         """Embed the input IDs"""
         is_zero = inputs == self.zero_idx
-        # TODO(amelie)
-        # assert torch.equal(is_zero, (inputs < 0)), (
-        #    f"Input IDs contain negative IDs which are not the zero token ({self.zero_idx}). "
-        #    "This is likely not the behavior you want"
-        # )
         zero = torch.zeros(1, dtype=inputs.dtype, device=inputs.device)
         y = super().forward(inputs.clamp(min=0))
         if self.norm is not None:
