@@ -6,7 +6,7 @@ This is the MLX implementation for MoshiVis.
 
 ## Usage
 
-We have tested the MLX version with MacBook Pro M3.
+We have tested the MLX version with MacBook Air M3 (4-bit quantization) and a MacMini M4 Pro (both 4- and 8-bit quantization).
 
 We use (and recommend) `uv` to run the server. Start the server with:
 ```bash
@@ -14,9 +14,6 @@ uv run server
 ```
 
 It starts the web UI. The connection is via http, at [localhost:8998](http://localhost:8998).
-
-You can use `--hf-repo` to select a different pretrained model, by setting the proper Hugging Face repository.
-See [the model list](https://github.com/kyutai-labs/moshi?tab=readme-ov-file#models) for a reference of the available models.
 
 ## License
 
@@ -32,16 +29,25 @@ The license of mlx-vlm is MIT.
 
 If you use either Mimi or Moshi, please cite the following paper,
 
-TODO: CHANGE ME
 ```
+@article{kyutai2025moshivis,
+  author = {Amélie Royer and Moritz Böhle and Gabriel de Marmiesse and
+  Laurent Mazaré and Alexandre Défossez and Neil Zeghidour and Patrick Pérez},
+  year = {2025},
+  title = {Vision-Speech Models: Teaching Speech Models to Converse about Images},
+  journal = {ArXiv},
+  url = {https://arxiv.org/abs/2503.15633}
+}
+
 @techreport{kyutai2024moshi,
-    author = {Alexandre D\'efossez and Laurent Mazar\'e and Manu Orsini and Am\'elie Royer and
-			  Patrick P\'erez and Herv\'e J\'egou and Edouard Grave and Neil Zeghidour},
-    title = {Moshi: a speech-text foundation model for real-time dialogue},
-    institution = {Kyutai},
-    year={2024},
-    month={September},
-    url={http://kyutai.org/Moshi.pdf},
+      title={Moshi: a speech-text foundation model for real-time dialogue},
+      author={Alexandre Défossez and Laurent Mazaré and Manu Orsini and
+      Amélie Royer and Patrick Pérez and Hervé Jégou and Edouard Grave and Neil Zeghidour},
+      year={2024},
+      eprint={2410.00037},
+      archivePrefix={arXiv},
+      primaryClass={eess.AS},
+      url={https://arxiv.org/abs/2410.00037},
 }
 ```
 

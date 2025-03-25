@@ -78,7 +78,7 @@ class XAGate(nn.Module):
     ):
         super().__init__()
 
-        assert conditional_gating, "TODO: Support non-conditional gating."
+        assert conditional_gating
         self.dims = cfg.d_model
         hidden_dims = int(hidden_dims_factor * self.dims)
 

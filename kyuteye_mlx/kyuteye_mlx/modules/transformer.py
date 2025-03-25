@@ -96,7 +96,6 @@ class TransformerLayer(nn.Module):
         if cfg.gating:
             self.gating = MlpGating(cfg)
         else:
-            # TODO: Use a better name?
             self.gating = MlpNoGating(cfg)
 
         if cfg.norm == "layer_norm":
