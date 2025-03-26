@@ -178,6 +178,7 @@ def get_model(args, load_weights: bool = True) -> models.LmGen:
         lm_config = models.config_siglip()
     else:
         raise ValueError(f"Unknown encoder {args.encoder}")
+    lm_config.transformer.xa_start = args.xa_start
 
     model = models.Lm(lm_config)
     model.set_dtype(mx.bfloat16)
@@ -477,7 +478,7 @@ def web_server(
         static_path: None | str = None
         if args.static is None:
             log("info", "retrieving the static content")
-            dist_tgz = hf_hub_download("kyutai/moshi-artifacts", "dist.tgz")
+            dist_tgz = hf_hub_download("kyutai/moshi-artifacts", "vis_dist.tgz")
             dist_tgz = Path(dist_tgz)
             dist = dist_tgz.parent / "dist"
             if not dist.exists():
@@ -531,12 +532,12 @@ def get_args_for_main() -> argparse.Namespace:
     parser.add_argument("--mimi-weights", type=str)
     parser.add_argument("-q", "--quantized", type=int, choices=[4, 8])
     parser.add_argument("--steps", default=4000, type=int)
-    parser.add_argument("--hf-repo", type=str, default="kyutai/moshika-vis-mlx-bf16")
+    parser.add_argument("--hf-repo", type=str, default="kyutai/moshika-vis-mlx")
     parser.add_argument("--static", type=str)
     parser.add_argument("--img_size", type=int, default=448)
     parser.add_argument("--encoder", type=str, default="siglip")
     parser.add_argument("--host", default="localhost", type=str)
-    parser.add_argument("--port", default=8998, type=int)
+    parser.add_argument("--port", default=8008, type=int)
     parser.add_argument(
         "--ssl",
         type=str,
@@ -546,10 +547,11 @@ def get_args_for_main() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--no-browser", action="store_true")
-    parser.add_argument("--text-temperature", type=float, default=0.8)
-    parser.add_argument("--audio-temperature", type=float, default=0.8)
+    parser.add_argument("--text-temperature", type=float, default=0.45)
+    parser.add_argument("--audio-temperature", type=float, default=0.7)
     parser.add_argument("--text-top-p", type=float, default=0.95)
     parser.add_argument("--audio-top-p", type=float, default=0.95)
+    parser.add_argument("--xa-start", type=int, default=16)
 
     args = parser.parse_args()
     if args.moshi_weights is not None:

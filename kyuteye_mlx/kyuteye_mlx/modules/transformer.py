@@ -118,6 +118,7 @@ class TransformerLayer(nn.Module):
                 raise ValueError(f"unsupported norm type {cfg.norm}")
         else:
             self.cross_attention = None
+        self.xa_start = cfg.xa_start
 
     def __call__(
         self,
@@ -130,8 +131,8 @@ class TransformerLayer(nn.Module):
         if self.cross_attention is not None:
             if xa_cache is None:
                 raise ValueError("xa_cache should never be None when using cross attention.")
-            xs = xs + self.cross_attention(self.norm_cross(xs), xa_cache=xa_cache, kv=img_embeds)
-            pass
+            if cache.offset >= self.xa_start:
+                xs = xs + self.cross_attention(self.norm_cross(xs), xa_cache=xa_cache, kv=img_embeds)
         xs = xs + self.gating(self.norm2(xs))
         return xs
 

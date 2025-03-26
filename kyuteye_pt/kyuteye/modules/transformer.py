@@ -167,19 +167,19 @@ class TransformerLayer(StreamingModule):
         x: torch.Tensor,
         cross_attention_src: Optional[Tuple[torch.Tensor, torch.Tensor] | torch.Tensor],
         cross_attention_mask: Optional[torch.Tensor] = None,
-    ) -> torch.Tensor:
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """Cross attention"""
         if self.cross_attention is not None and cross_attention_src is not None:
             x_orig = x
-            update = self.cross_attention(
+            update, gate_weight = self.cross_attention(
                 self.norm_cross(x),
                 cross_attention_src,
                 None,
                 cross_attention_mask,
             )
-            return x_orig + update
+            return x_orig + update, gate_weight
 
-        return x
+        return x, None
 
     def _self_attend(
         self,
@@ -202,7 +202,7 @@ class TransformerLayer(StreamingModule):
         ] = None,
         cross_attention_mask: Optional[torch.Tensor] = None,
         attention_mask: Optional[torch.Tensor] = None,
-    ) -> torch.Tensor:
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """(Optional) MHSA => (Optional) cross-attention => FFN
 
         :param x: Input query tensor
@@ -224,7 +224,7 @@ class TransformerLayer(StreamingModule):
 
         x = self._self_attend(x, attention_mask=attention_mask)
 
-        x = self._maybe_cross_attend(
+        x, gate_weight = self._maybe_cross_attend(
             x,
             cross_attention_src=cross_attention_src,
             cross_attention_mask=cross_attention_mask,
@@ -235,7 +235,7 @@ class TransformerLayer(StreamingModule):
         # Update streaming offset for the multi linear FFNs in the depformer
         if self.is_streaming:
             self.streaming_offset += x.shape[1]
-        return x
+        return x, gate_weight
 
 
 class Transformer(StreamingModule):
@@ -317,7 +317,9 @@ class Transformer(StreamingModule):
             if isinstance(module, MultiheadAttention):
                 module.context = context
 
-    def forward(self, x: torch.Tensor, *args: Any, **kwargs: Any) -> torch.Tensor:
+    def forward(
+        self, x: torch.Tensor, *args: Any, **kwargs: Any
+    ) -> Tuple[torch.Tensor, float]:
         """Forward pass"""
         _, seq_len, channels = x.shape
 
@@ -328,7 +330,10 @@ class Transformer(StreamingModule):
             )
             x = x + self.positional_scale * pos_emb
 
-        for layer in self.layers:
-            x = layer(x, *args, **kwargs)
+        alpha = 0.0
+        for layer_idx, layer in enumerate(self.layers):
+            x, gate_weight = layer(x, *args, **kwargs)
+            if gate_weight is not None and layer_idx >= len(self.layers) - 10:
+                alpha += torch.mean(gate_weight).cpu().item()
 
-        return x
+        return x, alpha / min(10, len(self.layers))

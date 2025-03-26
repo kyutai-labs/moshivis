@@ -165,7 +165,7 @@ impl Mimi {
     pub fn encode_pre_quantize(&mut self, xs: &Tensor) -> Result<Tensor> {
         let xs = self.encoder.forward(xs)?;
         self.encoder_transformer.reset_state();
-        let xs = self.encoder_transformer.forward(&xs, None)?;
+        let xs = self.encoder_transformer.forward(&xs)?;
         let xs = &xs[0];
         xs.apply(&self.downsample)
     }
@@ -173,7 +173,7 @@ impl Mimi {
     pub fn encode(&mut self, xs: &Tensor) -> Result<Tensor> {
         let xs = self.encoder.forward(xs)?;
         self.encoder_transformer.reset_state();
-        let xs = self.encoder_transformer.forward(&xs, None)?;
+        let xs = self.encoder_transformer.forward(&xs)?;
         let xs = &xs[0];
         let xs = xs.apply(&self.downsample)?;
         let codes = self.quantizer.encode(&xs)?;
@@ -197,7 +197,7 @@ impl Mimi {
         let emb = self.quantizer.decode(codes)?;
         let emb = emb.apply(&self.upsample)?;
         self.decoder_transformer.reset_state();
-        let outs = self.decoder_transformer.forward(&emb, None)?;
+        let outs = self.decoder_transformer.forward(&emb)?;
         let out = &outs[0];
         self.decoder.forward(out)
     }

@@ -7,7 +7,6 @@
 from typing import Any, Callable, Literal, Optional, Tuple, Union
 
 import torch
-
 from kyuteye.modules.attention import MultiheadAttention
 from kyuteye.modules.streaming_utils import StreamingModule
 
@@ -59,11 +58,13 @@ class XAGate(torch.nn.Module):
         else:
             raise NotImplementedError("Unknown activation function", activation)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Gating (constant scaling or input-dependent)"""
         if isinstance(self.alpha, torch.nn.Parameter):
-            return x * self.act(self.alpha)
-        return x * self.act(self.alpha(x))
+            gate_weight = self.act(self.alpha)
+        else:
+            gate_weight = self.act(self.alpha(x))
+        return x * gate_weight, gate_weight
 
 
 class SharedXaGate(XAGate, metaclass=SharedModuleType):
@@ -167,6 +168,9 @@ class GatedCrossAttention(StreamingModule):
     ) -> torch.Tensor:
         """Build the mask of which tokens should receive contribution from
         the cross-attention image tokens"""
+        if self.is_streaming and isinstance(self.xa_start, int):
+            return int(self.streaming_offset >= self.xa_start)
+
         if not (
             self.xa_start in {"start", "boi", "eoi"} or isinstance(self.xa_start, int)
         ) or not (self.xa_end in {"end", "eoi"} or isinstance(self.xa_end, int)):
@@ -246,7 +250,10 @@ class GatedCrossAttention(StreamingModule):
         if self.is_streaming:
             # case 1: never stop
             if self.xa_end == "end":
-                return True
+                return self.xa_start == "start" or (
+                    isinstance(self.xa_start, int)
+                    and self.streaming_offset >= self.xa_start
+                )
             # case 2: XA applies to the image; we only apply cross-attention
             # in the step where the image is inserted
             if self.xa_end == "eoi" and image_tokens_mask is None:
@@ -286,7 +293,7 @@ class GatedCrossAttention(StreamingModule):
         value: Optional[torch.Tensor] = None,
         cross_attention_mask: Optional[torch.Tensor] = None,
         image_tokens_mask: Optional[torch.Tensor] = None,
-    ) -> torch.Tensor:
+    ) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         """Gated Cross attention
 
         :param x: Input query tensor
@@ -297,6 +304,7 @@ class GatedCrossAttention(StreamingModule):
             are in the stream. This is used to determine which token should
             cross-attend to the image
         """
+        gate_weight = None
         if self.is_streaming:
             if not self.has_streaming_attribute("offset"):
                 self.streaming_offset = 0
@@ -321,7 +329,7 @@ class GatedCrossAttention(StreamingModule):
             )
 
             if self.gate is not None:
-                x = self.gate(x)
+                x, gate_weight = self.gate(x)
 
             if self.per_layer_alpha is not None:
                 x *= self.per_layer_alpha
@@ -333,4 +341,4 @@ class GatedCrossAttention(StreamingModule):
         if self.is_streaming:
             self.streaming_offset += x.shape[1]
 
-        return x
+        return x, gate_weight

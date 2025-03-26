@@ -1,6 +1,6 @@
 # MoshiVis - PyTorch
 See the [top-level README.md][main_repo] for more information on MoshiVis. 
-This is the PyTorch implementation for MoshiVis based on Moshi.
+This is the PyTorch implementation for MoshiVis.
 
 ## License
 

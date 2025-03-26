@@ -7,13 +7,21 @@ This is the MLX implementation for MoshiVis.
 ## Usage
 
 We have tested the MLX version with MacBook Air M3 (4-bit quantization) and a MacMini M4 Pro (both 4- and 8-bit quantization).
-
-We use (and recommend) `uv` to run the server. Start the server with:
+You can start the server with:
 ```bash
+# In Bfloat16 - weights will be downloaded from HF
 uv run server
+
+# In Q4
+uv run server -q 4
+
+# In Q8
+uv run server -q 8
 ```
 
-It starts the web UI. The connection is via http, at [localhost:8998](http://localhost:8998).
+This will start the web UI which you can connect to via http, at [localhost:8008](http://localhost:8008).
+
+Note that unlike other backends, not all settings available in the web UI are propagated to the MLX backend. Instead, you can configure some options directly via the command line e.g. `--text-temperature`.
 
 ## License
 

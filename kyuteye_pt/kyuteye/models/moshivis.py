@@ -187,7 +187,7 @@ class MoshiVis(StreamingModule):
         ] = None,
         cross_attention_mask: Optional[torch.Tensor] = None,
         attention_mask: Optional[torch.Tensor] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> Tuple[torch.Tensor, torch.Tensor, float]:
         """Forward pass for Moshi
 
         :param input_ids: Text + audio tokens of shape (batch, codebooks, seq length)
@@ -214,7 +214,7 @@ class MoshiVis(StreamingModule):
             inputs_embeds += update
 
         # Pass through Helium
-        transformer_out = self.llm(
+        transformer_out, gate_weight = self.llm(
             inputs_embeds=inputs_embeds,
             cross_attention_src=cross_attention_src,
             cross_attention_mask=cross_attention_mask,
@@ -224,7 +224,7 @@ class MoshiVis(StreamingModule):
 
         # Output proj
         text_logits = self.llm.text_linear(transformer_out)[:, None]
-        return transformer_out, text_logits
+        return transformer_out, text_logits, gate_weight
 
     def forward_depformer(
         self,
@@ -260,7 +260,7 @@ class MoshiVis(StreamingModule):
 
         # depformer_input is [B, 1, depformer_dim].
         # The streaming state of the depformer ensures that the proper layer is run.
-        dep_output = self.depformer(depformer_input)
+        dep_output, _ = self.depformer(depformer_input)
         logits = self.audio_linears[depformer_cb_index](dep_output)
         logits = logits[:, None]
         assert logits.dim() == 4, logits.shape  # [B, Ka, S, card]
@@ -400,7 +400,7 @@ class MoshiVisGen(StreamingModule):
         self,
         input_tokens: torch.Tensor,
         ca_src: Optional[Tuple[torch.Tensor, torch.Tensor] | torch.Tensor] = None,
-    ) -> torch.Tensor | None:
+    ) -> Tuple[torch.Tensor | None, float]:
         """One step of generation"""
         state = self._streaming_state
         if state is None:
@@ -458,7 +458,7 @@ class MoshiVisGen(StreamingModule):
             ).all(), input_
             assert (input_[:, :1] <= lm_model.text_card).all()
 
-        transformer_out, text_logits = self.lm_model.forward_text(
+        transformer_out, text_logits, gate_weight = self.lm_model.forward_text(
             input_, cross_attention_src=ca_src
         )
 
@@ -494,7 +494,7 @@ class MoshiVisGen(StreamingModule):
         if current_offset <= self.max_delay:
             self.add_streaming_attribute("cache", current_input_cache)
             self.add_streaming_attribute("offset", current_offset)
-            return None
+            return None, 0.0
 
         # otherwise, retrieve tokens with the correct delay
         gen_delays_cuda = self.delays_cuda[
@@ -508,7 +508,7 @@ class MoshiVisGen(StreamingModule):
         out = current_input_cache.gather(dim=2, index=index)
         self.add_streaming_attribute("offset", current_offset)
         self.add_streaming_attribute("cache", current_input_cache)
-        return out
+        return out, gate_weight
 
     def depformer_step(
         self,

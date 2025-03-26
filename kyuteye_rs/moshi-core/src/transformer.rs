@@ -163,11 +163,7 @@ impl XaGate {
 }
 
 impl XaGate {
-    pub fn forward_with_gate_weight(
-        &self,
-        xs: &Tensor,
-        step: Option<usize>,
-    ) -> Result<(Tensor, Option<Tensor>)> {
+    pub fn forward_with_gate_weight(&self, xs: &Tensor) -> Result<(Tensor, Option<Tensor>)> {
         match self {
             Self::Normal => Ok((xs.clone(), None)),
             Self::ConstantGated { alpha } => Ok((xs.broadcast_mul(alpha)?, None)),
@@ -177,15 +173,7 @@ impl XaGate {
                 activation,
                 learnable_bias,
             } => {
-                let alpha = if let Some(step) = step {
-                    if step < 16 {
-                        (Tensor::zeros(xs.shape(), xs.dtype(), xs.device())? - 4.0)?
-                    } else {
-                        xs.apply(in_proj)?.relu()?.apply(out_proj)?
-                    }
-                } else {
-                    xs.apply(in_proj)?.relu()?.apply(out_proj)?
-                };
+                let alpha = xs.apply(in_proj)?.relu()?.apply(out_proj)?;
                 let alpha = match (activation, learnable_bias) {
                     (candle_nn::init::NonLinearity::Tanh, _) => alpha.tanh()?,
                     (candle_nn::init::NonLinearity::Sigmoid, true) => {
@@ -205,7 +193,7 @@ impl XaGate {
 
 impl Module for XaGate {
     fn forward(&self, xs: &Tensor) -> Result<Tensor> {
-        let (xs, _) = self.forward_with_gate_weight(xs, None)?;
+        let (xs, _) = self.forward_with_gate_weight(xs)?;
         Ok(xs)
     }
 }
@@ -349,7 +337,6 @@ impl StreamingMultiheadCrossAttention {
         xs: &Tensor,
         ca_src: &CaSrc,
         mask: Option<&Tensor>,
-        step: Option<usize>,
     ) -> Result<(Tensor, Option<Tensor>)> {
         let _enter = self.span.enter();
         if self.kv_repeat != 1 {
@@ -390,17 +377,11 @@ impl StreamingMultiheadCrossAttention {
             .reshape((b, t, hd))?
             .to_dtype(original_dtype)?
             .apply(&self.out_proj)?;
-        self.gate.forward_with_gate_weight(&xs, step)
+        self.gate.forward_with_gate_weight(&xs)
     }
 
-    pub fn forward(
-        &self,
-        xs: &Tensor,
-        ca_src: &CaSrc,
-        mask: Option<&Tensor>,
-        step: Option<usize>,
-    ) -> Result<Tensor> {
-        let (xs, _) = self.forward_with_gate_weight(xs, ca_src, mask, step)?;
+    pub fn forward(&self, xs: &Tensor, ca_src: &CaSrc, mask: Option<&Tensor>) -> Result<Tensor> {
+        let (xs, _) = self.forward_with_gate_weight(xs, ca_src, mask)?;
         Ok(xs)
     }
 }
@@ -847,7 +828,6 @@ impl StreamingTransformerLayer {
         xs: &Tensor,
         ca_src: Option<&CaSrc>,
         mask: Option<&Tensor>,
-        step: Option<usize>,
     ) -> Result<(Tensor, Option<Tensor>)> {
         let _enter = self.span.enter();
         if !self.norm_first {
@@ -864,7 +844,7 @@ impl StreamingTransformerLayer {
             (Some((norm_cross, cross_attn)), Some(ca_src)) => {
                 let residual = &xs;
                 let xs = xs.apply(norm_cross)?;
-                let (xs, alpha) = cross_attn.forward_with_gate_weight(&xs, ca_src, None, step)?;
+                let (xs, alpha) = cross_attn.forward_with_gate_weight(&xs, ca_src, None)?;
                 ((residual + xs)?, alpha)
             }
             _ => (xs, None),
@@ -882,9 +862,8 @@ impl StreamingTransformerLayer {
         xs: &Tensor,
         ca_src: Option<&CaSrc>,
         mask: Option<&Tensor>,
-        step: Option<usize>,
     ) -> Result<Tensor> {
-        let (xs, _) = self.forward_with_gate_weight(xs, ca_src, mask, step)?;
+        let (xs, _) = self.forward_with_gate_weight(xs, ca_src, mask)?;
         Ok(xs)
     }
 
@@ -939,17 +918,12 @@ impl StreamingTransformer {
         })
     }
 
-    pub fn forward(&mut self, xs: &Tensor, step: Option<usize>) -> Result<Tensor> {
-        self.forward_ca(xs, None, step)
+    pub fn forward(&mut self, xs: &Tensor) -> Result<Tensor> {
+        self.forward_ca(xs, None)
     }
 
-    pub fn forward_ca(
-        &mut self,
-        xs: &Tensor,
-        ca_src: Option<&CaSrc>,
-        step: Option<usize>,
-    ) -> Result<Tensor> {
-        let (xs, _) = self.forward_with_gate_weight(xs, ca_src, step)?;
+    pub fn forward_ca(&mut self, xs: &Tensor, ca_src: Option<&CaSrc>) -> Result<Tensor> {
+        let (xs, _) = self.forward_with_gate_weight(xs, ca_src)?;
         Ok(xs)
     }
 
@@ -957,7 +931,6 @@ impl StreamingTransformer {
         &mut self,
         xs: &Tensor,
         ca_src: Option<&CaSrc>,
-        step: Option<usize>,
     ) -> Result<(Tensor, Tensor)> {
         let (_b, t, c) = xs.dims3()?;
         // We will extract at most "context" from the kv_cache.
@@ -998,7 +971,7 @@ impl StreamingTransformer {
         let mut alpha = Tensor::zeros((), xs.dtype(), xs.device())?;
 
         for (layer_idx, layer) in self.layers.iter_mut().enumerate() {
-            (xs, gate_alpha) = layer.forward_with_gate_weight(&xs, ca_src, mask.as_ref(), step)?;
+            (xs, gate_alpha) = layer.forward_with_gate_weight(&xs, ca_src, mask.as_ref())?;
             if layer_idx >= num_layers - num_last_layers_in_avg {
                 alpha = match gate_alpha {
                     None => alpha,
@@ -1051,7 +1024,7 @@ impl StreamingModule for StreamingTransformer {
     fn step(&mut self, xs: &StreamTensor) -> Result<StreamTensor> {
         match xs.as_option() {
             None => Ok(StreamTensor::empty()),
-            Some(xs) => Ok(StreamTensor::from_tensor(self.forward(xs, None)?)),
+            Some(xs) => Ok(StreamTensor::from_tensor(self.forward(xs)?)),
         }
     }
 }
@@ -1100,7 +1073,7 @@ impl ProjectedTransformer {
         })
     }
 
-    pub fn forward(&mut self, xs: &Tensor, step: Option<usize>) -> Result<Vec<Tensor>> {
+    pub fn forward(&mut self, xs: &Tensor) -> Result<Vec<Tensor>> {
         let _enter = self.span.enter();
         let xs = if self.conv_layout {
             xs.transpose(1, 2)?
@@ -1108,7 +1081,7 @@ impl ProjectedTransformer {
             xs.clone()
         };
         let xs = xs.apply(&self.input_proj.as_ref())?;
-        let xs = self.transformer.forward(&xs, step)?;
+        let xs = self.transformer.forward(&xs)?;
         let mut ys = Vec::with_capacity(self.output_projs.len());
         for output_proj in self.output_projs.iter() {
             let ys_ = xs.apply(&output_proj.as_ref())?;
