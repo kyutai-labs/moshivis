@@ -1,11 +1,10 @@
 # pylint: disable=redefined-outer-name, pointless-string-statement
-"""Port of Helium from Jax to Pytorch and then HF. 
+"""Port of Helium from Jax to Pytorch and then HF.
 The architecture is also made to be easily converted to the mimi/audiocraft codebase"""
 
-from typing import Any, Literal, Optional
+from typing import Any, Literal, Optional, Tuple
 
 import torch
-
 from kyuteye.modules.transformer import Transformer
 from kyuteye.modules.utils import ClampedEmbedding, NormalizationLayer
 
@@ -117,7 +116,7 @@ class Helium(torch.nn.Module):
         cross_attention_src: Optional[torch.Tensor] = None,
         cross_attention_mask: Optional[torch.Tensor] = None,
         return_features: bool = False,
-    ) -> torch.Tensor:
+    ) -> Tuple[torch.Tensor, float]:
         """Forward function
 
         :param input_ids: Input tokens IDs with size `(batch_size, seq_length)`
@@ -135,7 +134,7 @@ class Helium(torch.nn.Module):
             assert input_ids is not None
             inputs_embeds = self.text_emb(input_ids)
 
-        x = self.transformer(
+        x, gate_weight = self.transformer(
             inputs_embeds,
             attention_mask=attention_mask,
             cross_attention_src=cross_attention_src,
@@ -143,5 +142,5 @@ class Helium(torch.nn.Module):
         )
         x = self.out_norm(x)
         if return_features:
-            return x
-        return self.text_linear(x)
+            return x, gate_weight
+        return self.text_linear(x), gate_weight

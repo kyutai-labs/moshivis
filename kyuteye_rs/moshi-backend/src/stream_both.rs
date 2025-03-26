@@ -20,6 +20,7 @@ pub struct ForceSessionConfig {
     pub audio_topk: usize,
     pub pad_mult: Option<f32>,
     pub repetition_penalty: Option<(usize, f32)>,
+    pub xa_start: Option<usize>,
     pub text_temperature_gating_influence: Option<f32>,
 }
 
@@ -127,6 +128,7 @@ pub struct SessionConfigReq {
     pub repetition_penalty: Option<f32>,
     pub image_resolution: Option<usize>,
     pub center_crop: Option<bool>,
+    pub xa_start: Option<usize>,
     pub text_temperature_gating_influence: Option<f32>,
 }
 
@@ -143,6 +145,7 @@ pub struct SessionConfig {
     pub repetition_penalty: Option<(usize, f32)>,
     pub image_resolution: Option<usize>,
     pub center_crop: Option<bool>,
+    pub xa_start: usize,
     pub text_temperature_gating_influence: f32,
     pub email: Option<String>,
     pub user_feedback: Option<usize>,
@@ -189,6 +192,10 @@ impl SessionConfigReq {
             None => self.repetition_penalty_context.zip(self.repetition_penalty),
             Some(v) => v.repetition_penalty,
         };
+        let xa_start = match force_cfg {
+            None => self.xa_start.unwrap_or(0),
+            Some(v) => v.xa_start.unwrap_or(0),
+        };
         let text_temperature_gating_influence = match force_cfg {
             None => self.text_temperature_gating_influence.unwrap_or(0.0),
             Some(v) => v.text_temperature_gating_influence.unwrap_or(0.0),
@@ -207,6 +214,7 @@ impl SessionConfigReq {
             repetition_penalty,
             image_resolution: self.image_resolution,
             center_crop: self.center_crop,
+            xa_start,
             text_temperature_gating_influence,
         }
     }
@@ -487,8 +495,11 @@ impl StreamingModel {
                             prev_text_token,
                             &codes,
                             None,
-                            ca_src.as_ref(),
-                            Some(counter),
+                            if counter >= self.session_config.xa_start {
+                                ca_src.as_ref()
+                            } else {
+                                None
+                            },
                         )?;
                         if let Some(audio_tokens) = state.last_audio_tokens() {
                             let audio_tokens = {

@@ -28,6 +28,7 @@ class TransformerConfig:
     dim_feedforward: int
     conv_layout: bool
     img_emb_dim: int | None = None
+    xa_start: int = 0
 
     @property
     def head_dim(self) -> int:

@@ -9,6 +9,7 @@ export const DEFAULT_REPETITION_PENALTY_CONTEXT = 64;
 export const DEFAULT_REPETITION_PENALTY = 1.15;
 export const DEFAULT_IMAGE_RESOLUTION = 448;
 export const DEFAULT_IMAGE_URL = undefined;
+export const DEFAULT_GATE_DELAY = 16;
 export const DEFAULT_GATE_INFLUENCE = 0.0;
 export const DEFAULT_DISPLAY_COLOR = true;
 export const DEFAULT_CENTER_CROP = false;
@@ -23,6 +24,7 @@ export type ModelParamsValues = {
   repetitionPenalty: number,
   imageResolution: number,
   imageUrl: string | undefined,
+  gateDelay: number,
   gateInfluence: number,
   displayColor: boolean,
   centerCrop: boolean,
@@ -37,6 +39,7 @@ export function importantSettingsHaveChanged(params: ModelParamsValues): boolean
     (params.repetitionPenalty != DEFAULT_REPETITION_PENALTY) ||
     (params.repetitionPenaltyContext != DEFAULT_REPETITION_PENALTY_CONTEXT) ||
     (params.imageResolution != DEFAULT_IMAGE_RESOLUTION) ||
+    (params.gateDelay != DEFAULT_GATE_DELAY) ||
     (params.gateInfluence != DEFAULT_GATE_INFLUENCE) ||
     (params.centerCrop != DEFAULT_CENTER_CROP)
 }
@@ -54,6 +57,7 @@ export const useModelParams = (params?: useModelParamsArgs) => {
   const [repetitionPenaltyContext, setRepetitionPenaltyContextBase] = useState(params?.repetitionPenaltyContext || DEFAULT_REPETITION_PENALTY_CONTEXT);
   const [imageResolution, setImageResolutionBase] = useState(params?.imageResolution || DEFAULT_IMAGE_RESOLUTION);
   const [imageUrl, setImageUrlBase] = useState(params?.imageUrl || DEFAULT_IMAGE_URL);
+  const [gateDelay, setGateDelayBase] = useState(params?.gateDelay || DEFAULT_GATE_DELAY);
   const [gateInfluence, setGateInfluenceBase] = useState(params?.gateInfluence || DEFAULT_GATE_INFLUENCE);
   const [displayColor, setDisplayColorBase] = useState<boolean>(params?.displayColor == undefined ? DEFAULT_DISPLAY_COLOR : params?.displayColor);
   const [centerCrop, setCenterCropBase] = useState<boolean>(params?.centerCrop == undefined ? DEFAULT_CENTER_CROP : params?.centerCrop);
@@ -68,6 +72,7 @@ export const useModelParams = (params?: useModelParamsArgs) => {
     setRepetitionPenaltyContextBase(DEFAULT_REPETITION_PENALTY_CONTEXT);
     setImageResolutionBase(DEFAULT_IMAGE_RESOLUTION);
     setImageUrlBase(DEFAULT_IMAGE_URL);
+    setGateDelayBase(DEFAULT_GATE_DELAY);
     setGateInfluenceBase(DEFAULT_GATE_INFLUENCE);
     setDisplayColorBase(DEFAULT_DISPLAY_COLOR);
     setCenterCropBase(DEFAULT_CENTER_CROP);
@@ -128,6 +133,11 @@ export const useModelParams = (params?: useModelParamsArgs) => {
   const setImageUrl = useCallback((value: string | undefined) => {
     setImageUrlBase(value);
   }, []);
+  const setGateDelay = useCallback((value: number) => {
+    if (value <= 32 && value >= 0) {
+      setGateDelayBase(value);
+    }
+  }, []);
   const setGateInfluence = useCallback((value: number) => {
     if (value <= 1.0 && value >= 0.0) {
       setGateInfluenceBase(value);
@@ -149,6 +159,7 @@ export const useModelParams = (params?: useModelParamsArgs) => {
     repetitionPenaltyContext,
     imageResolution,
     imageUrl,
+    gateDelay,
     gateInfluence,
     displayColor,
     centerCrop,
@@ -161,6 +172,7 @@ export const useModelParams = (params?: useModelParamsArgs) => {
     setRepetitionPenaltyContext,
     setImageUrl,
     setImageResolution,
+    setGateDelay,
     setGateInfluence,
     setDisplayColor,
     setCenterCrop,

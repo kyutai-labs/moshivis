@@ -68,6 +68,7 @@ const buildURL = ({
   if (params.imageUrl != undefined) {
     url.searchParams.append("image_resolution", params.imageResolution.toString());
     url.searchParams.append("center_crop", params.centerCrop.toString());
+    url.searchParams.append("xa_start", params.gateDelay.toString());
     url.searchParams.append("text_temperature_gating_influence", params.gateInfluence.toString());
   }
   return url.toString();
@@ -322,6 +323,7 @@ export const Conversation: FC<ConversationProps> = ({
                     sessionStorage.setItem("repetitionPenalty", modelParams.repetitionPenalty.toString());
                     sessionStorage.setItem("repetitionPenaltyContext", modelParams.repetitionPenaltyContext.toString());
                     sessionStorage.setItem("imageResolution", modelParams.imageResolution.toString());
+                    sessionStorage.setItem("gateDelay", modelParams.gateDelay.toString());
                     sessionStorage.setItem("gateInfluence", modelParams.gateInfluence.toString());
                     sessionStorage.setItem("displayColor", modelParams.displayColor.toString());
                     sessionStorage.setItem("centerCrop", modelParams.centerCrop.toString());

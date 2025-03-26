@@ -191,7 +191,6 @@ impl State {
         input_audio_tokens: &[u32],
         force_text_token: Option<u32>,
         ca_src: Option<&CaSrc>,
-        step: Option<usize>,
     ) -> candle::Result<(u32, f32)> {
         let mut codes = Vec::with_capacity(self.config.total_audio_codebooks());
         let dev = self.model.device();
@@ -228,7 +227,7 @@ impl State {
             Some(ca_src) => {
                 let (logits, ys, alpha) = self
                     .model
-                    .forward_with_gate_weight(text_token, codes, ca_src, step)?;
+                    .forward_with_gate_weight(text_token, codes, ca_src)?;
                 (logits, ys, alpha.to_dtype(candle::DType::F32)?.to_scalar()?)
             }
         };
@@ -294,7 +293,6 @@ impl State {
             input_audio_tokens,
             force_text_token,
             ca_src,
-            None,
         )?;
         Ok(text_token)
     }
@@ -305,14 +303,12 @@ impl State {
         input_audio_tokens: &[u32],
         force_text_token: Option<u32>,
         ca_src: Option<&CaSrc>,
-        step: Option<usize>,
     ) -> candle::Result<(u32, f32)> {
         self.step_(
             Some(text_token),
             input_audio_tokens,
             force_text_token,
             ca_src,
-            step,
         )
     }
 

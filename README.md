@@ -86,7 +86,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
  > Note: At the moment, we do not support quantization
  > for the PyTorch version, so you will need a GPU with a significant amount of memory ($\sim$ 24GB).
 
-You can start the MoshiVis PyTorch server with the following command and then access the web UI on [https://localhost:8008](http://localhost:8008)
+You can start the MoshiVis PyTorch server with the following command and then access the web UI on [https://localhost:8008](https://localhost:8008)
 
 ```bash
 cd kyuteye_pt
@@ -129,20 +129,16 @@ cd kyuteye_mlx
 # In bfloat16 - weights will be downloaded from HF
 uv run server
 
-# In q4 - using local quantized weights
+# In q4
 uv run server -q 4
 
-# In q8 - using local quantized weights
+# In q8
 uv run server -q 8
-
-# In bfloat16 - using local weights
-uv run server --moshi-weights model.safetensors
-
-# In q4 - using local (quantized) weights
-uv run server --moshi-weights model.safetensors -q 4
 ```
 
-You can then access the web UI on [http://localhost:8008](http://localhost:8008)
+You can then access the web UI at [http://localhost:8008](http://localhost:8008).
+
+Note that unlike other backends, not all settings available in the web UI are propagated to the MLX backend. Instead, you can configure some options directly via the command line e.g. `--text-temperature`.
 
 ### Frontends
 

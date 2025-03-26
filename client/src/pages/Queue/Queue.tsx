@@ -53,6 +53,7 @@ export const Queue: FC = () => {
     repetitionPenalty: getFloatFromStorage(sessionStorage.getItem("repetitionPenalty")),
     repetitionPenaltyContext: getIntFromStorage(sessionStorage.getItem("repetitionPenaltyContext")),
     imageResolution: getIntFromStorage(sessionStorage.getItem("imageResolution")),
+    gateDelay: getIntFromStorage(sessionStorage.getItem("gateDelay")),
     gateInfluence: getFloatFromStorage(sessionStorage.getItem("gateInfluence")),
     displayColor: getBoolFromStage(sessionStorage.getItem("displayColor")),
     centerCrop: getBoolFromStage(sessionStorage.getItem("centerCrop")),

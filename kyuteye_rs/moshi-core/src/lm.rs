@@ -62,6 +62,7 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
+            xa_start: None,
         };
         let depformer_cfg = transformer::Config {
             d_model: 1024,
@@ -85,6 +86,7 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
+            xa_start: None,
         };
         let depformer_cfg = DepFormerConfig {
             num_slices: 8,
@@ -127,6 +129,7 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
+            xa_start: Some(16), // Offset to stabilize the incipit.
         };
         let depformer_cfg = transformer::Config {
             d_model: 1024,
@@ -150,6 +153,7 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
+            xa_start: None,
         };
         let depformer_cfg = DepFormerConfig {
             num_slices: 8,
@@ -283,7 +287,7 @@ impl DepFormer {
                 }
                 None => xs,
             };
-            let xs = slice.transformer.forward(&xs, None)?;
+            let xs = slice.transformer.forward(&xs)?;
             let logits = xs.apply(&slice.linear_out)?;
             let logits = match logits.dim(0)? {
                 1 => logits.i((0, 0))?,
@@ -336,7 +340,7 @@ impl DepFormer {
                 }
                 None => xs,
             };
-            let xs = slice.transformer.forward(&xs, None)?;
+            let xs = slice.transformer.forward(&xs)?;
             let logits = xs.apply(&slice.linear_out)?;
             let logits = match logits.dim(0)? {
                 2 => ((logits.i((0, 0))? * cfg_alpha)? - (logits.i((1, 0))? * (cfg_alpha - 1.))?)?,
@@ -488,7 +492,7 @@ impl LmModel {
                 emb = (emb + e)?
             }
         }
-        let ys = self.transformer.forward(&emb, None)?;
+        let ys = self.transformer.forward(&emb)?;
         let ys = ys.apply(&self.out_norm)?;
         let logits = ys.apply(&self.text_linear)?;
         if VERBOSE.with(|v| *v) {
@@ -510,9 +514,8 @@ impl LmModel {
         text_ids: Option<Tensor>,
         audio_ids: Vec<Option<Tensor>>,
         ca_src: &CaSrc,
-        step: Option<usize>,
     ) -> candle::Result<(Tensor, Tensor)> {
-        let (logits, ys, _) = self.forward_with_gate_weight(text_ids, audio_ids, ca_src, step)?;
+        let (logits, ys, _) = self.forward_with_gate_weight(text_ids, audio_ids, ca_src)?;
         Ok((logits, ys))
     }
 
@@ -521,7 +524,6 @@ impl LmModel {
         text_ids: Option<Tensor>,
         audio_ids: Vec<Option<Tensor>>,
         ca_src: &CaSrc,
-        step: Option<usize>,
     ) -> candle::Result<(Tensor, Tensor, Tensor)> {
         if VERBOSE.with(|v| *v) {
             print!("text_ids ");
@@ -565,7 +567,7 @@ impl LmModel {
         }
         let (ys, alpha) = self
             .transformer
-            .forward_with_gate_weight(&emb, Some(ca_src), step)?;
+            .forward_with_gate_weight(&emb, Some(ca_src))?;
         let ys = ys.apply(&self.out_norm)?;
         let logits = ys.apply(&self.text_linear)?;
         Ok((logits, ys, alpha))

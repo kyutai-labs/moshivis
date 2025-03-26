@@ -147,9 +147,7 @@ impl stream_both::AppStateInner {
             let mut lm_model = lm_model.clone();
             let (_v, ys) = match &ca_src {
                 None => lm_model.forward(None, vec![None; config.mimi_num_codebooks])?,
-                Some(x) => {
-                    lm_model.forward_ca(None, vec![None; config.mimi_num_codebooks], x, None)?
-                }
+                Some(x) => lm_model.forward_ca(None, vec![None; config.mimi_num_codebooks], x)?,
             };
             let mut lp = candle_transformers::generation::LogitsProcessor::new(123, None, None);
             let _ = lm_model.depformer_sample(&ys, None, &[], &mut lp)?;

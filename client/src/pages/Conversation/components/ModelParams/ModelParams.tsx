@@ -15,6 +15,7 @@ export const ModelParams: FC<ModelParamsProps> = ({
   repetitionPenalty,
   repetitionPenaltyContext,
   imageResolution,
+  gateDelay,
   gateInfluence,
   displayColor,
   centerCrop,
@@ -26,6 +27,7 @@ export const ModelParams: FC<ModelParamsProps> = ({
   setRepetitionPenalty,
   setRepetitionPenaltyContext,
   setImageResolution,
+  setGateDelay,
   setGateInfluence,
   setDisplayColor,
   setCenterCrop,
@@ -82,6 +84,11 @@ export const ModelParams: FC<ModelParamsProps> = ({
             <td>Center Crop:</td>
             <td className="w-12 text-center">{centerCrop ? '✔️' : '✖️'}</td>
             <td className="p-2"><input className="range align-middle" disabled={isConnected} type="range" id="center-crop" name="center-crop" step="1" min="0" max="1" value={centerCrop ? 1 : 0} onChange={e => setCenterCrop((parseFloat(e.target.value) == 1) ? true : false)} /></td>
+          </tr>
+          <tr title="Add a temporal delay of X tokens before activating the gate">
+            <td>Gating Delay:</td>
+            <td className="w-12 text-center">{gateDelay}</td>
+            <td className="p-2"><input className="range align-middle" disabled={isConnected} type="range" id="gating-delay" name="gating-delay" step="1" min="0" max="32" value={gateDelay} onChange={e => setGateDelay(parseFloat(e.target.value))} /></td>
           </tr>
           <tr title="Whether to display MoshiVis's gates' outputs via the text color (orange indicates more image relevance; green, more general knowledge)">
             <td>Display Gating:</td>

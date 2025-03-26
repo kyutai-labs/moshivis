@@ -80,8 +80,10 @@ class ServerState:
     moshi_vis: "MoshiVisGen"
     image_encoder_model: "ImageProjection"
     image_size: int
+    xa_start: int
     lock: asyncio.Lock
     dtype: torch.dtype
+    display_gating: bool
 
     def __init__(
         self,
@@ -92,6 +94,8 @@ class ServerState:
         device: str | torch.device,
         dtype: torch.dtype = torch.bfloat16,
         max_msg_size: int = 0,
+        image_size: int = 448,
+        xa_start: int = 0,
     ):
         self.mimi = mimi
         self.text_tokenizer = text_tokenizer
@@ -99,7 +103,9 @@ class ServerState:
         self.image_encoder_model = image_encoder_model
         self.embeddings: Tuple[torch.Tensor, torch.Tensor] | torch.Tensor | None = None
         self.max_msg_size = max_msg_size
-        self.image_size = 448
+        self.image_size = image_size
+        self.xa_start = xa_start
+        self.display_gating = True
         self.device = device
         self.dtype = dtype
         self.frame_size = int(self.mimi.sample_rate / self.mimi.frame_rate)
@@ -119,7 +125,7 @@ class ServerState:
                 torch.zeros(1, 3, 224, 224, device=self.device)
             )["cross_attention_src"]
             for c in range(codes.shape[-1]):
-                tokens = self.moshi_vis.step(codes[:, :, c : c + 1], ca_src=ca_src)
+                tokens, _ = self.moshi_vis.step(codes[:, :, c : c + 1], ca_src=ca_src)
                 if tokens is None:
                     continue
                 _ = self.mimi.decode(tokens[:, 1:])
@@ -140,10 +146,10 @@ class ServerState:
                     if message.type == aiohttp.WSMsgType.ERROR:
                         log("error", f"{ws.exception()}")
                         break
-                    elif message.type == aiohttp.WSMsgType.CLOSED:
+                    if message.type == aiohttp.WSMsgType.CLOSED:
                         log("info", "closed received")
                         break
-                    elif message.type != aiohttp.WSMsgType.BINARY:
+                    if message.type != aiohttp.WSMsgType.BINARY:
                         log("error", f"unexpected message type {message.type}")
                         continue
                     message = message.data
@@ -189,8 +195,14 @@ class ServerState:
                     chunk = chunk.to(device=self.device)[None, None]
                     codes = self.mimi.encode(chunk)
                     for c in range(codes.shape[-1]):
-                        tokens = self.moshi_vis.step(
-                            codes[:, :, c : c + 1], ca_src=self.embeddings
+                        tokens, gate_weight = self.moshi_vis.step(
+                            codes[:, :, c : c + 1],
+                            ca_src=(
+                                self.embeddings
+                                if self.moshi_vis.get_streaming_attribute("offset", 0)
+                                >= self.xa_start
+                                else None
+                            ),
                         )
                         if tokens is None:
                             continue
@@ -205,7 +217,14 @@ class ServerState:
                         if text_token not in (0, 3):
                             _text = self.text_tokenizer.id_to_piece(text_token)  # type: ignore
                             _text = _text.replace("▁", " ")
-                            msg = b"\x02" + bytes(_text, encoding="utf8")
+                            text_color = round(
+                                max(min((gate_weight - 0.005) / 0.016, 1.0), 0.0) * 10
+                            )
+                            msg = (
+                                b"\x07"
+                                + text_color.to_bytes(1, "big")
+                                + bytes(_text, encoding="utf8")
+                            )
                             log("info", f"text token '{_text}'")
                             await ws.send_bytes(msg)
                     log("info", f"frame handled in {1000 * (time.time() - be):.1f}ms")
@@ -249,6 +268,9 @@ class ServerState:
             if (aux := query_parameters.get("image_resolution", None)) is not None
             else self.image_size
         )
+        if (aux := query_parameters.get("xa_start", None)) is not None:
+            self.xa_start = int(aux)
+
         async with self.lock:
             opus_writer = sphn.OpusStreamWriter(self.mimi.sample_rate)  # type: ignore
             opus_reader = sphn.OpusStreamReader(self.mimi.sample_rate)  # type: ignore
@@ -353,7 +375,6 @@ def start_server(
             assert moshi_weight.endswith(".safetensors")
             moshi_weight = moshi_weight.replace(".safetensors", "_pt.safetensors")
             print(f"Will load from {moshi_weight}")
-            pass
     else:
         moshi_weight = hf_hub_download(kyuteye_config.hf_repo, kyuteye_config.model)
     torch_dtype = getattr(torch, dtype)
@@ -369,6 +390,7 @@ def start_server(
         image_encoder_model=image_embedder,
         device=device,
         dtype=torch_dtype,
+        xa_start=kyuteye_config.xa_start,
     )
     log("info", "warming up the model")
     state.warmup()

@@ -14,11 +14,10 @@ text_tokenizer: tokenizer_spm_32k_3.model
 xa_conditional_gating: true
 xa_delay: 0
 xa_dim: null
+xa_start: start
 xa_end: end
 xa_gate_shared: false
 xa_gating: sigmoid
 xa_layers: []
-xa_rope: false
 xa_shared: true
-xa_start: start
 xa_step: 1

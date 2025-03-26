@@ -6,17 +6,23 @@ This is the MLX implementation for MoshiVis.
 
 ## Usage
 
-We have tested the MLX version with MacBook Pro M3.
+We have tested the MLX version with a Macbook Air M3 chip and a MacMini M4 Pro chip.
+You can start the server with:
 
-We use (and recommend) `uv` to run the server. Start the server with:
 ```bash
+# In Bfloat16 - weights will be downloaded from HF
 uv run server
+
+# In Q4
+uv run server -q 4
+
+# In Q8
+uv run server -q 8
 ```
 
-It starts the web UI. The connection is via http, at [localhost:8998](http://localhost:8998).
+This will start the web UI which you can connect to via http, at [localhost:8008](http://localhost:8008).
 
-You can use `--hf-repo` to select a different pretrained model, by setting the proper Hugging Face repository.
-See [the model list](https://github.com/kyutai-labs/moshi?tab=readme-ov-file#models) for a reference of the available models.
+Note that unlike other backends, not all settings available in the web UI are propagated to the MLX backend. Instead, you can configure some options directly via the command line e.g. `--text-temperature`.
 
 ## License
 
