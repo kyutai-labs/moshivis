@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-export const DEFAULT_TEXT_TEMPERATURE = 0.4;
+export const DEFAULT_TEXT_TEMPERATURE = 0.45;
 export const DEFAULT_TEXT_TOPK = 25;
 export const DEFAULT_AUDIO_TEMPERATURE = 0.7;
 export const DEFAULT_AUDIO_TOPK = 250;
