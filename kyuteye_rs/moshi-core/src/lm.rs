@@ -62,7 +62,6 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
-            xa_start: None,
         };
         let depformer_cfg = transformer::Config {
             d_model: 1024,
@@ -86,7 +85,6 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
-            xa_start: None,
         };
         let depformer_cfg = DepFormerConfig {
             num_slices: 8,
@@ -129,7 +127,6 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
-            xa_start: Some(16), // Offset to stabilize the incipit.
         };
         let depformer_cfg = transformer::Config {
             d_model: 1024,
@@ -153,7 +150,6 @@ impl Config {
             conv_kernel_size: 3,
             kv_repeat: 1,
             max_seq_len: 4096,
-            xa_start: None,
         };
         let depformer_cfg = DepFormerConfig {
             num_slices: 8,

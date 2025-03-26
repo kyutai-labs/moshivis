@@ -26,7 +26,6 @@ pub struct Config {
     pub positional_embedding: PositionalEmbedding,
     pub use_conv_block: bool,
     pub cross_attention: Option<(CrossAttentionGating, crate::NormType, Option<usize>)>,
-    pub xa_start: Option<usize>,
     pub conv_kernel_size: usize,
     pub use_conv_bias: bool,
     pub gating: Option<candle_nn::Activation>,

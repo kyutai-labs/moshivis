@@ -73,7 +73,6 @@ impl Config {
             kv_repeat: 1,
             conv_layout: true, // see builders.py
             max_seq_len: 8192, // the transformer works at 25hz so this is ~5 mins.
-            xa_start: None,
         };
         Config {
             channels: 1,
