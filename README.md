@@ -104,6 +104,7 @@ In order to run the Rust inference server, use the following command:
 
 ```bash
 cd kyuteye_rs
+pip install pkg-config
 cargo run --features cuda --bin moshi-backend -r -- --config configs/config-moshika-vis.json standalone --vis
 ```
 
@@ -182,6 +183,7 @@ To use an `https` connection, you will first need to setup SSL certificates:
 
 ```bash
 # Generate the SSL certificates in the root directory
+# pip install openssl
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout key.pem -out cert.pem
 ```
 
