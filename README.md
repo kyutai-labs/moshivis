@@ -93,7 +93,7 @@ cd kyuteye_pt
 uv run server configs/moshika-vis.yaml --port 8088
 ```
 
-Note that if your GPU is on a distant machine, you may need to forward the remote 8088 port to your localhost using ssh `-L` flag. Then connects to [https://localhost:8088](https://localhost:8088) as mentionned previously.
+Note that if your GPU is on a distant machine, you may need to forward the remote 8088 port to your localhost using ssh `-L` flag. Then connects to [https://localhost:8088](https://localhost:8088) as mentioned previously.
 
 
 ### Rust Backend
