@@ -55,3 +55,6 @@ dev = [
     "mypy==1.11.2",
     "pylint>=3.3.4",
 ]
+
+[tool.uv]
+exclude-newer = "7 days"

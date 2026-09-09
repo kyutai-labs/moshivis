@@ -65,3 +65,6 @@ dev = [
     "ruff>=0.9.7",
     "monkeytype>=23.3.0",
 ]
+
+[tool.uv]
+exclude-newer = "7 days"
